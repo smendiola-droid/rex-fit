@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex-Fit | Calendario Filosófico</title>
+    <style>
+        /* Variables de colores oscuros estéticos */
+        :root {
+            --bg-dark: #121214;
+            --bg-card: #1a1a1e;
+            --primary: #bb86fc;
+            --text-main: #e1e1e6;
+            --text-muted: #a8a8b3;
+            --border: #29292e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        #fecha {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        #frase {
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.4;
+            color: #ffffff;
+        }
+
+        #autor {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        #reflexion {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        /* Simulación de botón para cambiar de día (Opcional, para pruebas) */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: var(--bg-card);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Rex-Fit</h1>
+        <p>Mente fuerte en cuerpo fuerte • 2026</p>
+    </header>
+
+    <div class="card">
+        <div class="section">
+            <span class="label">Fecha</span>
+            <div id="fecha">Cargando...</div>
+        </div>
+
+        <div class="section">
+            <span class="label">Frase</span>
+            <div id="frase">Cargando...</div>
+        </div>
+
+        <div class="section">
+            <span class="label">Autor</span>
+            <div id="autor">Cargando...</div>
+        </div>
+
+        <div class="section">
+            <span class="label">Reflexión</span>
+            <div id="reflexion">Cargando...</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="cambiarDia(-1)">← Día Anterior</button>
+        <button onclick="irAHoy()">Hoy</button>
+        <button onclick="cambiarDia(1)">Siguiente Día →</button>
+    </div>
+
+    <script>
+        // Base de datos de frases simulada (puedes expandirla hasta 365)
+        // El índice corresponde al día del año (0 a 364)
+        const calendarioFilosofico = {
+            168: {
+                frase: "La vida es una serie de cambios naturales y espontáneos. No te resistas a ellos, eso solo crea dolor.",
+                autor: "Lao Tse (Taoísmo)",
+                reflexion: "Queremos aferrarnos a las cosas porque nos dan seguridad, pero la vida siempre se mueve. Acepta que las cosas cambian y te ahorrarás mucho sufrimiento."
+            },
+            169: {
+                frase: "No es pobre el que tiene poco, sino el que mucho desea.",
+                autor: "Séneca (Estoicismo)",
+                reflexion: "La verdadera riqueza no se encuentra sumando posesiones o logros, sino reduciendo nuestra necesidad de ellos. Hoy, agradece lo que ya tienes."
+            },
+            170: {
+                frase: "El que tiene un porqué para vivir puede soportar casi cualquier cómo.",
+                autor: "Friedrich Nietzsche (Existencialismo)",
+                reflexion: "Cuando tu propósito es claro, las dificultades diarias se vuelven ligeras. Si hoy el día se pone cuesta arriba, recuerda por qué empezaste."
+            }
+            // Puedes seguir añadiendo días aquí usando el número de día del año como clave
+        };
+
+        // Rellenar días vacíos para que la app nunca se quede en blanco si pruebas otros días
+        for(let i=1; i<=365; i++) {
+            if(!calendarioFilosofico[i]) {
+                calendarioFilosofico[i] = {
+                    frase: "La excelencia no es un acto, sino un hábito.",
+                    autor: "Aristóteles (Filosofía Griega)",
+                    reflexion: "Lo que haces repetidamente define quién eres. No busques la perfección en un solo día, construye constancia en tus pequeñas acciones diarias."
+                };
+            }
+        }
+
+        // Estado de la aplicación: Empezamos en el día actual
+        let diaSimulado = obtenerDiaDelAno(new Date());
+
+        function obtenerDiaDelAno(date) {
+            const inicio = new Date(date.getFullYear(), 0, 0);
+            const dif = date - inicio;
+            const unDia = 1000 * 60 * 60 * 24;
+            return Math.floor(dif / unDia);
+        }
+
+        function mostrarReflexion(dia) {
+            // Configurar fecha para el año 2026 basada en el número de día
+            const fecha2026 = new Date(2026, 0, dia);
+            const opciones = { day: 'numeric', month: 'long' };
+            const nombreMesDia = fecha2026.toLocaleDateString('es-ES', opciones);
+
+            // Insertar los datos en el HTML con el formato solicitado
+            document.getElementById('fecha').innerText = `${nombreMesDia} de 2026 | Día ${dia} de 365`;
+            document.getElementById('frase').innerText = `"${calendarioFilosofico[dia].frase}"`;
+            document.getElementById('autor').innerText = calendarioFilosofico[dia].autor;
+            document.getElementById('reflexion').innerText = calendarioFilosofico[dia].reflexion;
+        }
+
+        // Funciones de los botones de control
+        function cambiarDia(direccion) {
+            diaSimulado += direccion;
+            if (diaSimulado < 1) diaSimulado = 365;
+            if (diaSimulado > 365) diaSimulado = 1;
+            mostrarReflexion(diaSimulado);
+        }
+
+        function irAHoy() {
+            diaSimulado = obtenerDiaDelAno(new Date());
+            mostrarReflexion(diaSimulado);
+        }
+
+        // Inicializar la app mostrando el día de hoy
+        irAHoy();
+    </script>
+</body>
+</html>
